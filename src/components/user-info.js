@@ -9,9 +9,9 @@ const UserInfo = ({userinfo}) => {
       </h1>
 
       <ul className='repos-info'>
-        <li>Repositories: 0</li>
-        <li>Followers: 0</li>
-        <li>Following: 0</li>
+        <li>Repositories: {userinfo.repos}</li>
+        <li>Followers: {userinfo.followers}</li>
+        <li>Following: {userinfo.following}</li>
       </ul>
     </div>
   )
