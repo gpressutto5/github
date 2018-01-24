@@ -4,32 +4,32 @@ import UserInfo from './user-info'
 import Actions from './actions'
 import Repos from './repos'
 
-const AppContent = () => {
+const AppContent = ({userinfo, repos, starred}) => {
   return (
     <div className='app'>
       <Search />
-      <UserInfo />
-      <Actions />
+      {!!userinfo && <UserInfo userinfo={userinfo} />}
+      {!!userinfo && <Actions />}
 
-      <Repos
+      {!!repos.length && <Repos
         classname='repos'
         title='Repositories:'
-        repos={[{
-          name: 'gpressutto5/repo-name',
-          link: '#'
-        }]}
-      />
+        repos={repos}
+      />}
 
-      <Repos
+      {!!starred.length && <Repos
         classname='starred'
         title='Starred:'
-        repos={[{
-          name: 'gpressutto5/repo-name',
-          link: '#'
-        }]}
-      />
+        repos={starred}
+      />}
     </div>
   )
+}
+
+AppContent.propTypes = {
+  userinfo: React.PropTypes.object.isRequired,
+  repos: React.PropTypes.array.isRequired,
+  starred: React.PropTypes.array.isRequired
 }
 
 export default AppContent
