@@ -2,9 +2,13 @@ import React from 'react'
 
 const Actions = ({getRepos, getStarred}) => {
   return (
-    <div className='actions'>
-      <button onClick={getRepos}>See repositories</button>
-      <button onClick={getStarred}>See starred</button>
+    <div className='row'>
+      <div className='col-md-6'>
+        <button className='btn btn-secondary btn-lg btn-block' onClick={getRepos}>See repositories</button>
+      </div>
+      <div className='col-md-6'>
+        <button className='btn btn-secondary btn-lg btn-block' onClick={getStarred}>See starred</button>
+      </div>
     </div>
   )
 }

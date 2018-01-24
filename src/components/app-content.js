@@ -6,22 +6,39 @@ import Repos from './repos'
 
 const AppContent = ({userinfo, repos, starred, handleSearch, getRepos, getStarred}) => {
   return (
-    <div className='app'>
-      <Search handleSearch={handleSearch} />
-      {!!userinfo && <UserInfo userinfo={userinfo} />}
-      {!!userinfo && <Actions getRepos={getRepos} getStarred={getStarred} />}
+    <div className='container'>
+      <div className='row'>
+        <div className='col-md-10 offset-md-1'>
+          <div className='row'>
+            <Search handleSearch={handleSearch} />
+          </div>
+          <div className='row'>
+            <div className='col-md-6'>
+              {!!userinfo && <UserInfo userinfo={userinfo} />}
+            </div>
+            <div className='col-md-6'>
+              {!!userinfo && <Actions getRepos={getRepos} getStarred={getStarred} />}
 
-      {!!repos.length && <Repos
-        classname='repos'
-        title='Repositories:'
-        repos={repos}
-      />}
-
-      {!!starred.length && <Repos
-        classname='starred'
-        title='Starred:'
-        repos={starred}
-      />}
+              <div className='row'>
+                <div className='col-md-6'>
+                  {!!repos.length && <Repos
+                    classname='repos'
+                    title='Repositories:'
+                    repos={repos}
+                  />}
+                </div>
+                <div className='col-md-6'>
+                  {!!starred.length && <Repos
+                    classname='starred'
+                    title='Starred:'
+                    repos={starred}
+                  />}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

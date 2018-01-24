@@ -65,7 +65,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "111fbe80ebfaecc9b591"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "5e9ca8cefccaaca8f56b"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -36662,7 +36662,17 @@
 	
 	var _react2 = _interopRequireDefault(_react);
 	
+	var _appContent = __webpack_require__(424);
+	
+	var _appContent2 = _interopRequireDefault(_appContent);
+	
+	var _ajax = __webpack_require__(429);
+	
+	var _ajax2 = _interopRequireDefault(_ajax);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -36676,13 +36686,79 @@
 	  function App() {
 	    _classCallCheck(this, App);
 	
-	    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+	    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+	
+	    _this.state = {
+	      userinfo: null,
+	      repos: [],
+	      starred: []
+	    };
+	    return _this;
 	  }
 	
 	  _createClass(App, [{
+	    key: 'getGitHubApiUrl',
+	    value: function getGitHubApiUrl(username, type) {
+	      var internalUsername = username ? '/' + username : '';
+	      var internalType = type ? '/' + type : '';
+	      return 'https://api.github.com/users' + internalUsername + internalType;
+	    }
+	  }, {
+	    key: 'handleSearch',
+	    value: function handleSearch(e) {
+	      var _this2 = this;
+	
+	      var key = e.which || e.keyCode;
+	      var ENTER = 13;
+	      if (e.type === 'keyup' && key !== ENTER) {
+	        return;
+	      }
+	      (0, _ajax2.default)().get(this.getGitHubApiUrl(document.querySelector('[data-js="search-input"]').value)).then(function (result) {
+	        _this2.setState({
+	          userinfo: {
+	            avatar: result.avatar_url,
+	            username: result.login,
+	            name: result.name || result.login,
+	            repos: result.public_repos,
+	            followers: result.followers,
+	            following: result.following
+	          },
+	          repos: [],
+	          starred: []
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'getRepos',
+	    value: function getRepos(type) {
+	      var _this3 = this;
+	
+	      return function (e) {
+	        (0, _ajax2.default)().get(_this3.getGitHubApiUrl(_this3.state.userinfo.username, type)).then(function (result) {
+	          _this3.setState(_defineProperty({}, type, result.map(function (repo) {
+	            return {
+	              name: repo.name,
+	              link: repo.html_url
+	            };
+	          })));
+	        });
+	      };
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement('div', null);
+	      var _this4 = this;
+	
+	      return _react2.default.createElement(_appContent2.default, {
+	        userinfo: this.state.userinfo,
+	        repos: this.state.repos,
+	        starred: this.state.starred,
+	        handleSearch: function handleSearch(e) {
+	          return _this4.handleSearch(e);
+	        },
+	        getRepos: this.getRepos('repos'),
+	        getStarred: this.getRepos('starred')
+	      });
 	    }
 	  }]);
 	
@@ -36704,6 +36780,428 @@
 	}();
 
 	;
+
+/***/ }),
+/* 424 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(6);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _search = __webpack_require__(425);
+	
+	var _search2 = _interopRequireDefault(_search);
+	
+	var _userInfo = __webpack_require__(426);
+	
+	var _userInfo2 = _interopRequireDefault(_userInfo);
+	
+	var _actions = __webpack_require__(427);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
+	var _repos = __webpack_require__(428);
+	
+	var _repos2 = _interopRequireDefault(_repos);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var AppContent = function AppContent(_ref) {
+	  var userinfo = _ref.userinfo,
+	      repos = _ref.repos,
+	      starred = _ref.starred,
+	      handleSearch = _ref.handleSearch,
+	      getRepos = _ref.getRepos,
+	      getStarred = _ref.getStarred;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'container' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'row' },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'col-md-10 offset-md-1' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2.default.createElement(_search2.default, { handleSearch: handleSearch })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'row' },
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-md-6' },
+	            !!userinfo && _react2.default.createElement(_userInfo2.default, { userinfo: userinfo })
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'col-md-6' },
+	            !!userinfo && _react2.default.createElement(_actions2.default, { getRepos: getRepos, getStarred: getStarred }),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'row' },
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'col-md-6' },
+	                !!repos.length && _react2.default.createElement(_repos2.default, {
+	                  classname: 'repos',
+	                  title: 'Repositories:',
+	                  repos: repos
+	                })
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'col-md-6' },
+	                !!starred.length && _react2.default.createElement(_repos2.default, {
+	                  classname: 'starred',
+	                  title: 'Starred:',
+	                  repos: starred
+	                })
+	              )
+	            )
+	          )
+	        )
+	      )
+	    )
+	  );
+	};
+	
+	AppContent.propTypes = {
+	  userinfo: _react2.default.PropTypes.object,
+	  repos: _react2.default.PropTypes.array.isRequired,
+	  starred: _react2.default.PropTypes.array.isRequired,
+	  handleSearch: _react2.default.PropTypes.func.isRequired,
+	  getRepos: _react2.default.PropTypes.func.isRequired,
+	  getStarred: _react2.default.PropTypes.func.isRequired
+	};
+	
+	var _default = AppContent;
+	exports.default = _default;
+	;
+	
+	var _temp = function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(AppContent, 'AppContent', '/Users/guilherme/Code/Personal/github/src/components/app-content.js');
+	
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/guilherme/Code/Personal/github/src/components/app-content.js');
+	}();
+
+	;
+
+/***/ }),
+/* 425 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(6);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Search = function Search(_ref) {
+	  var handleSearch = _ref.handleSearch;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'input-group mb-3' },
+	    _react2.default.createElement('input', {
+	      type: 'search',
+	      className: 'form-control',
+	      placeholder: 'Type the username',
+	      'data-js': 'search-input',
+	      onKeyUp: handleSearch
+	    }),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'input-group-append' },
+	      _react2.default.createElement(
+	        'button',
+	        {
+	          className: 'btn btn-primary',
+	          onClick: handleSearch
+	        },
+	        'Search'
+	      )
+	    )
+	  );
+	};
+	
+	Search.propTypes = {
+	  handleSearch: _react2.default.PropTypes.func.isRequired
+	};
+	
+	var _default = Search;
+	exports.default = _default;
+	;
+	
+	var _temp = function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(Search, 'Search', '/Users/guilherme/Code/Personal/github/src/components/search.js');
+	
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/guilherme/Code/Personal/github/src/components/search.js');
+	}();
+
+	;
+
+/***/ }),
+/* 426 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(6);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var UserInfo = function UserInfo(_ref) {
+	  var userinfo = _ref.userinfo;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { style: {
+	        textAlign: 'center'
+	      } },
+	    _react2.default.createElement('img', { className: 'img-fluid', src: userinfo.avatar, style: {
+	        width: '200px',
+	        heigth: 'auto',
+	        borderRadius: '50%'
+	      } }),
+	    _react2.default.createElement(
+	      'h1',
+	      null,
+	      _react2.default.createElement(
+	        'a',
+	        { href: 'https://github.com/' + userinfo.username },
+	        userinfo.name
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'ul',
+	      { className: 'list-group list-group-flush' },
+	      _react2.default.createElement(
+	        'li',
+	        { className: 'list-group-item' },
+	        'Repositories: ',
+	        userinfo.repos
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        { className: 'list-group-item' },
+	        'Followers: ',
+	        userinfo.followers
+	      ),
+	      _react2.default.createElement(
+	        'li',
+	        { className: 'list-group-item' },
+	        'Following: ',
+	        userinfo.following
+	      )
+	    )
+	  );
+	};
+	
+	UserInfo.propTypes = {
+	  userinfo: _react2.default.PropTypes.shape({
+	    avatar: _react2.default.PropTypes.string.isRequired,
+	    username: _react2.default.PropTypes.string.isRequired,
+	    name: _react2.default.PropTypes.string.isRequired,
+	    repos: _react2.default.PropTypes.number.isRequired,
+	    followers: _react2.default.PropTypes.number.isRequired,
+	    following: _react2.default.PropTypes.number.isRequired
+	  })
+	};
+	
+	var _default = UserInfo;
+	exports.default = _default;
+	;
+	
+	var _temp = function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(UserInfo, 'UserInfo', '/Users/guilherme/Code/Personal/github/src/components/user-info.js');
+	
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/guilherme/Code/Personal/github/src/components/user-info.js');
+	}();
+
+	;
+
+/***/ }),
+/* 427 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(6);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Actions = function Actions(_ref) {
+	  var getRepos = _ref.getRepos,
+	      getStarred = _ref.getStarred;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'row' },
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'col-md-6' },
+	      _react2.default.createElement(
+	        'button',
+	        { className: 'btn btn-secondary btn-lg btn-block', onClick: getRepos },
+	        'See repositories'
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'col-md-6' },
+	      _react2.default.createElement(
+	        'button',
+	        { className: 'btn btn-secondary btn-lg btn-block', onClick: getStarred },
+	        'See starred'
+	      )
+	    )
+	  );
+	};
+	
+	Actions.propTypes = {
+	  getRepos: _react2.default.PropTypes.func.isRequired,
+	  getStarred: _react2.default.PropTypes.func.isRequired
+	};
+	
+	var _default = Actions;
+	exports.default = _default;
+	;
+	
+	var _temp = function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(Actions, 'Actions', '/Users/guilherme/Code/Personal/github/src/components/actions.js');
+	
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/guilherme/Code/Personal/github/src/components/actions.js');
+	}();
+
+	;
+
+/***/ }),
+/* 428 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(6);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var Repos = function Repos(_ref) {
+	  var className = _ref.className,
+	      title = _ref.title,
+	      repos = _ref.repos;
+	
+	  return _react2.default.createElement(
+	    'div',
+	    { className: className },
+	    _react2.default.createElement(
+	      'h2',
+	      null,
+	      title
+	    ),
+	    _react2.default.createElement(
+	      'div',
+	      { className: 'list-group list-group-flush' },
+	      repos.map(function (repo, index) {
+	        return _react2.default.createElement(
+	          'a',
+	          { key: index, className: 'list-group-item', href: repo.link },
+	          repo.name
+	        );
+	      })
+	    )
+	  );
+	};
+	
+	Repos.defaultProps = {
+	  className: ''
+	};
+	
+	Repos.propTypes = {
+	  className: _react2.default.PropTypes.string,
+	  title: _react2.default.PropTypes.string.isRequired,
+	  repos: _react2.default.PropTypes.array.isRequired
+	};
+	
+	var _default = Repos;
+	exports.default = _default;
+	;
+	
+	var _temp = function () {
+	  if (typeof __REACT_HOT_LOADER__ === 'undefined') {
+	    return;
+	  }
+	
+	  __REACT_HOT_LOADER__.register(Repos, 'Repos', '/Users/guilherme/Code/Personal/github/src/components/repos.js');
+	
+	  __REACT_HOT_LOADER__.register(_default, 'default', '/Users/guilherme/Code/Personal/github/src/components/repos.js');
+	}();
+
+	;
+
+/***/ }),
+/* 429 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/**!
+	 * ajax - v2.3.0
+	 * Ajax module in Vanilla JS
+	 * https://github.com/fdaciuk/ajax
+	
+	 * Sun Jul 23 2017 10:55:09 GMT-0300 (BRT)
+	 * MIT (c) Fernando Daciuk
+	*/
+	!function(e,t){"use strict"; true?!(__WEBPACK_AMD_DEFINE_FACTORY__ = (t), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)):"object"==typeof exports?exports=module.exports=t():e.ajax=t()}(this,function(){"use strict";function e(e){var r=["get","post","put","delete"];return e=e||{},e.baseUrl=e.baseUrl||"",e.method&&e.url?n(e.method,e.baseUrl+e.url,t(e.data),e):r.reduce(function(r,o){return r[o]=function(r,u){return n(o,e.baseUrl+r,t(u),e)},r},{})}function t(e){return e||null}function n(e,t,n,u){var c=["then","catch","always"],i=c.reduce(function(e,t){return e[t]=function(n){return e[t]=n,e},e},{}),f=new XMLHttpRequest,d=r(t,n,e);return f.open(e,d,!0),f.withCredentials=u.hasOwnProperty("withCredentials"),o(f,u.headers),f.addEventListener("readystatechange",a(i,f),!1),f.send(s(n)),i.abort=function(){return f.abort()},i}function r(e,t,n){if("get"!==n.toLowerCase()||!t)return e;var r=s(t),o=e.indexOf("?")>-1?"&":"?";return e+o+r}function o(e,t){t=t||{},u(t)||(t["Content-Type"]="application/x-www-form-urlencoded"),Object.keys(t).forEach(function(n){t[n]&&e.setRequestHeader(n,t[n])})}function u(e){return Object.keys(e).some(function(e){return"content-type"===e.toLowerCase()})}function a(e,t){return function n(){t.readyState===t.DONE&&(t.removeEventListener("readystatechange",n,!1),e.always.apply(e,c(t)),t.status>=200&&t.status<300?e.then.apply(e,c(t)):e["catch"].apply(e,c(t)))}}function c(e){var t;try{t=JSON.parse(e.responseText)}catch(n){t=e.responseText}return[t,e]}function s(e){return i(e)?f(e):e}function i(e){return"[object Object]"===Object.prototype.toString.call(e)}function f(e){return Object.keys(e).reduce(function(t,n){var r=t?t+"&":"";return r+d(n)+"="+d(e[n])},"")}function d(e){return encodeURIComponent(e)}return e});
 
 /***/ })
 /******/ ]);

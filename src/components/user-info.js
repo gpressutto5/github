@@ -2,16 +2,22 @@ import React from 'react'
 
 const UserInfo = ({userinfo}) => {
   return (
-    <div className='user-info'>
-      <img src={userinfo.avatar} />
+    <div style={{
+      textAlign: 'center'
+    }}>
+      <img className='img-fluid' src={userinfo.avatar} style={{
+        width: '200px',
+        heigth: 'auto',
+        borderRadius: '50%'
+      }} />
       <h1>
         <a href={`https://github.com/${userinfo.username}`}>{userinfo.name}</a>
       </h1>
 
-      <ul className='repos-info'>
-        <li>Repositories: {userinfo.repos}</li>
-        <li>Followers: {userinfo.followers}</li>
-        <li>Following: {userinfo.following}</li>
+      <ul className='list-group list-group-flush'>
+        <li className='list-group-item'>Repositories: {userinfo.repos}</li>
+        <li className='list-group-item'>Followers: {userinfo.followers}</li>
+        <li className='list-group-item'>Following: {userinfo.following}</li>
       </ul>
     </div>
   )

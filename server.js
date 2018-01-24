@@ -1,6 +1,6 @@
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
-const config = require('./webpack.config');
+const webpack = require('webpack')
+const WebpackDevServer = require('webpack-dev-server')
+const config = require('./webpack.config')
 
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
@@ -9,7 +9,7 @@ new WebpackDevServer(webpack(config), {
   stats: { colors: true }
 }).listen('3000', (error) => {
   if (error) {
-    return console.log(error);
+    return console.log(error)
   }
-  console.log('Listening on http://localhost:3000');
-});
+  console.log('Listening on http://localhost:3000')
+})

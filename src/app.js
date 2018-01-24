@@ -19,10 +19,10 @@ class App extends Component {
   handleSearch (e) {
     const key = e.which || e.keyCode
     const ENTER = 13
-    if (key !== ENTER) {
+    if (e.type === 'keyup' && key !== ENTER) {
       return
     }
-    ajax().get(this.getGitHubApiUrl(e.target.value))
+    ajax().get(this.getGitHubApiUrl(document.querySelector('[data-js="search-input"]').value))
       .then((result) => {
         this.setState({
           userinfo: {

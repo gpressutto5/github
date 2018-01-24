@@ -4,11 +4,11 @@ const Repos = ({className, title, repos}) => {
   return (
     <div className={className}>
       <h2>{title}</h2>
-      <ul className='repos'>
+      <div className='list-group list-group-flush'>
         {repos.map((repo, index) => (
-          <li key={index}><a href={repo.link}>{repo.name}</a></li>
+          <a key={index} className='list-group-item' href={repo.link}>{repo.name}</a>
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
