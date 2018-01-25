@@ -65,7 +65,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "5e9ca8cefccaaca8f56b"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "280c4beebace3be6ea64"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -36691,7 +36691,8 @@
 	    _this.state = {
 	      userinfo: null,
 	      repos: [],
-	      starred: []
+	      starred: [],
+	      isFetching: false
 	    };
 	    return _this;
 	  }
@@ -36713,6 +36714,9 @@
 	      if (e.type === 'keyup' && key !== ENTER) {
 	        return;
 	      }
+	      this.setState({
+	        isFetching: true
+	      });
 	      (0, _ajax2.default)().get(this.getGitHubApiUrl(document.querySelector('[data-js="search-input"]').value)).then(function (result) {
 	        _this2.setState({
 	          userinfo: {
@@ -36725,6 +36729,10 @@
 	          },
 	          repos: [],
 	          starred: []
+	        });
+	      }).always(function () {
+	        _this2.setState({
+	          isFetching: false
 	        });
 	      });
 	    }
@@ -36753,6 +36761,7 @@
 	        userinfo: this.state.userinfo,
 	        repos: this.state.repos,
 	        starred: this.state.starred,
+	        isFetching: this.state.isFetching,
 	        handleSearch: function handleSearch(e) {
 	          return _this4.handleSearch(e);
 	        },
@@ -36817,56 +36826,61 @@
 	  var userinfo = _ref.userinfo,
 	      repos = _ref.repos,
 	      starred = _ref.starred,
+	      isFetching = _ref.isFetching,
 	      handleSearch = _ref.handleSearch,
 	      getRepos = _ref.getRepos,
 	      getStarred = _ref.getStarred;
 	
 	  return _react2.default.createElement(
 	    'div',
-	    { className: 'container' },
+	    null,
 	    _react2.default.createElement(
 	      'div',
-	      { className: 'row' },
+	      { className: 'container' },
 	      _react2.default.createElement(
 	        'div',
-	        { className: 'col-md-10 offset-md-1' },
+	        { className: 'row' },
 	        _react2.default.createElement(
 	          'div',
-	          { className: 'row' },
-	          _react2.default.createElement(_search2.default, { handleSearch: handleSearch })
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'row' },
+	          { className: 'col-md-10 offset-md-1' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-md-6' },
-	            !!userinfo && _react2.default.createElement(_userInfo2.default, { userinfo: userinfo })
+	            { className: 'row' },
+	            _react2.default.createElement(_search2.default, { isDisabled: isFetching, handleSearch: handleSearch })
 	          ),
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'col-md-6' },
-	            !!userinfo && _react2.default.createElement(_actions2.default, { getRepos: getRepos, getStarred: getStarred }),
+	            { className: 'row' },
 	            _react2.default.createElement(
 	              'div',
-	              { className: 'row' },
+	              { className: 'col-md-6' },
+	              !!userinfo && _react2.default.createElement(_userInfo2.default, { userinfo: userinfo })
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-6' },
+	              !!userinfo && _react2.default.createElement(_actions2.default, { getRepos: getRepos, getStarred: getStarred }),
 	              _react2.default.createElement(
 	                'div',
-	                { className: 'col-md-6' },
-	                !!repos.length && _react2.default.createElement(_repos2.default, {
-	                  classname: 'repos',
-	                  title: 'Repositories:',
-	                  repos: repos
-	                })
-	              ),
-	              _react2.default.createElement(
-	                'div',
-	                { className: 'col-md-6' },
-	                !!starred.length && _react2.default.createElement(_repos2.default, {
-	                  classname: 'starred',
-	                  title: 'Starred:',
-	                  repos: starred
-	                })
+	                { className: 'row' },
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'col-md-6' },
+	                  !!repos.length && _react2.default.createElement(_repos2.default, {
+	                    classname: 'repos',
+	                    title: 'Repositories:',
+	                    repos: repos
+	                  })
+	                ),
+	                _react2.default.createElement(
+	                  'div',
+	                  { className: 'col-md-6' },
+	                  !!starred.length && _react2.default.createElement(_repos2.default, {
+	                    classname: 'starred',
+	                    title: 'Starred:',
+	                    repos: starred
+	                  })
+	                )
 	              )
 	            )
 	          )
@@ -36880,6 +36894,7 @@
 	  userinfo: _react2.default.PropTypes.object,
 	  repos: _react2.default.PropTypes.array.isRequired,
 	  starred: _react2.default.PropTypes.array.isRequired,
+	  isFetching: _react2.default.PropTypes.bool.isRequired,
 	  handleSearch: _react2.default.PropTypes.func.isRequired,
 	  getRepos: _react2.default.PropTypes.func.isRequired,
 	  getStarred: _react2.default.PropTypes.func.isRequired
@@ -36918,7 +36933,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var Search = function Search(_ref) {
-	  var handleSearch = _ref.handleSearch;
+	  var handleSearch = _ref.handleSearch,
+	      isDisabled = _ref.isDisabled;
 	
 	  return _react2.default.createElement(
 	    'div',
@@ -36927,6 +36943,7 @@
 	      type: 'search',
 	      className: 'form-control',
 	      placeholder: 'Type the username',
+	      disabled: isDisabled,
 	      'data-js': 'search-input',
 	      onKeyUp: handleSearch
 	    }),
@@ -36937,6 +36954,7 @@
 	        'button',
 	        {
 	          className: 'btn btn-primary',
+	          disabled: isDisabled,
 	          onClick: handleSearch
 	        },
 	        'Search'
@@ -36946,7 +36964,8 @@
 	};
 	
 	Search.propTypes = {
-	  handleSearch: _react2.default.PropTypes.func.isRequired
+	  handleSearch: _react2.default.PropTypes.func.isRequired,
+	  isDisabled: _react2.default.PropTypes.bool.isRequired
 	};
 	
 	var _default = Search;
